@@ -1,6 +1,11 @@
 # Autopsy AI (QA Autopilot)
 
-Autonomous AI QA engineer: **Paradox QA** (adaptive, real-browser edge-case testing) + **ProofFix** (source-aware, recommendation-only fix suggestions).
+Autopsy AI: **Paradox QA** (adaptive, real-browser edge-case testing) + **ProofFix** (source-aware, recommendation-only fix suggestions).
+
+## 🚀 Live Demo
+
+- **Frontend Dashboard:** https://autopsyai.vercel.app/
+- **Backend API:** https://autopsy-ai-168o.onrender.com
 
 ## Run
 
