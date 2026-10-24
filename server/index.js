@@ -9,7 +9,7 @@ const { ARTIFACTS } = require('./runner');
 
 const PORT = +process.env.PORT || 4000;
 const SAMPLE_URL = process.env.SAMPLE_APP_URL || 'http://localhost:4100';
-const DASHBOARD = path.join(__dirname, '..', 'QA AUTOPILOT.html');
+const DASHBOARD = path.join(__dirname, '..', 'index.html');
 
 const send = (res, code, body, type = 'application/json') => {
   res.writeHead(code, { 'Content-Type': type, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'content-type', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Cache-Control': 'no-store' });
