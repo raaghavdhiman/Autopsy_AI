@@ -1,0 +1,15 @@
+{
+  "name": "proofgraph",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ProofGraph / QA Autopilot — Paradox QA + ProofFix backend",
+  "scripts": {
+    "sample": "node sample-app/server.js",
+    "server": "node server/index.js",
+    "start": "node start.js",
+    "smoke": "node server/smoke.js"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

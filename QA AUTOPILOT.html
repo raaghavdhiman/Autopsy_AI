@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AUTOPSY AI</title>
+<style>
+:root{--bg:#07090a;--pn:#0d1310;--ln:#1b2a22;--g:#39ff88;--tx:#d7e3dc;--mu:#7d8f85;--r:#ff5c6c;--a:#ffb84d;--b:#5cc8ff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--ln);padding:18px 12px;background:#080c0a;position:sticky;top:0;height:100vh}
+.brand b{color:var(--g);letter-spacing:.12em;font-size:15px;text-shadow:0 0 12px #39ff8855}.brand small{display:block;color:var(--mu);font-size:11px;margin-bottom:18px}
+nav a{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;color:var(--mu);cursor:pointer;margin-bottom:2px;border:1px solid transparent;transition:.15s}
+nav a:hover{color:var(--tx);background:#0f1813}nav a.on{color:var(--g);background:#0f1f16;border-color:#1f4a31;box-shadow:0 0 14px #39ff8818}
+.top{display:flex;gap:10px;align-items:center;padding:12px 24px;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+.top input{flex:1;min-width:140px;max-width:320px}
+main{padding:24px;max-width:1200px}
+h1{margin:0 0 4px;font-size:26px}h2{margin:0 0 12px;font-size:15px}h3{margin:0 0 6px;font-size:14px}.sub{color:var(--mu);margin:0 0 20px}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.m{font-size:28px;font-weight:700;color:var(--g)}.mu{color:var(--mu)}.sm{font-size:12px}
+button,select,input,textarea{font:inherit;color:var(--tx);background:#0a110d;border:1px solid var(--ln);border-radius:8px;padding:8px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 0 2px #39ff8822}
+button{cursor:pointer;transition:.15s}button:hover{border-color:var(--g)}
+.pri{background:var(--g);color:#04120a;font-weight:600;border-color:var(--g)}.pri:hover{box-shadow:0 0 16px #39ff8866}
+button:disabled{opacity:.5;cursor:not-allowed}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--ln);font-size:13px}th{color:var(--mu);font-weight:500}
+tr.c{cursor:pointer}tr.c:hover{background:#0f1813}.sc{overflow-x:auto}
+.b{display:inline-block;padding:1px 9px;border-radius:99px;font-size:11px;border:1px solid;text-transform:capitalize}
+.critical,.failed,.open,.fail,.error{color:var(--r);border-color:#ff5c6c66;background:#ff5c6c12}.high,.blocked,.investigating,.review{color:var(--a);border-color:#ffb84d66;background:#ffb84d12}
+.medium,.running,.inconclusive,.low,.pending{color:var(--b);border-color:#5cc8ff66;background:#5cc8ff12}.passed,.pass,.verified,.completed,.reproduced{color:var(--g);border-color:#39ff8866;background:#39ff8812}
+.demo{color:var(--a);border:1px dashed #ffb84d88;border-radius:6px;padding:1px 8px;font-size:11px;letter-spacing:.08em}
+label{display:block;margin:10px 0 4px;color:var(--mu);font-size:12px}.f input,.f select,.f textarea{width:100%}.err{color:var(--r);font-size:12px}
+.tl{border-left:1px solid var(--ln);margin-left:6px}.tl div{padding:0 0 12px 14px;position:relative}.tl div:before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g)}
+pre{background:#050806;border:1px solid var(--ln);border-radius:8px;padding:12px;overflow-x:auto;font:12px/1.5 ui-monospace,Menlo,monospace;color:#a6f5c4;margin:8px 0}
+.bar{height:8px;background:#0a110d;border-radius:9px;overflow:hidden;border:1px solid var(--ln)}.bar i{display:block;height:100%;background:var(--g);transition:width .4s}
+.dr{position:fixed;inset:0;background:#000a;display:flex;justify-content:flex-end;z-index:9}.dr>div{width:min(560px,100%);background:var(--pn);border-left:1px solid var(--ln);padding:20px;overflow:auto;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:20px;background:#0f1f16;border:1px solid var(--g);padding:10px 16px;border-radius:10px;z-index:10;color:var(--g)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}ul{margin:4px 0;padding-left:18px}
+.empty{text-align:center;color:var(--mu);padding:28px}
+@media(max-width:800px){.app{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;flex-direction:column}nav{display:flex;overflow-x:auto;gap:4px}nav a{white-space:nowrap}main{padding:16px}.top{padding:10px 16px}}
+</style></head>
+<body><div class="app">
+<aside><div class="brand"><b>AUTOPSY AI</b><small>Autonomous AI QA Engineer</small></div><nav id="nav"></nav></aside>
+<div><div class="top">
+<select id="proj"><option>shop-demo-app</option><option>admin-portal</option></select>
+<input placeholder="Search…" oninput="gs(this.value)">
+<span class="b passed">● Staging</span><span class="demo">DEMO MODE</span>
+<button onclick="toast('No new notifications (demo)')">🔔</button><span class="b" style="color:var(--g);border-color:var(--g)">AK</span></div>
+<main id="main"></main></div></div>
+<div id="ov"></div>
+<script>
+const $=s=>document.querySelector(s),esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const B=x=>`<span class="b ${x.toLowerCase().replace(/ /g,'')}">${x}</span>`;
+const NAV=[['overview','◈','Overview'],['start','▶','Start Testing'],['paradox','∴','Paradox QA'],['bugs','⚠','Bug Reports'],['proofix','✎','ProofFix'],['regression','↻','Regression Tests'],['settings','⚙','Settings']];
+const S={page:'overview',q:'',sev:'',st:'',review:false,nx:0,running:false,prog:0,regRan:false,
+runs:[['R-024','shop-demo-app','42','completed','3m 12s',[38,3,1,0]],['R-023','shop-demo-app','35','completed','2m 40s',[30,4,0,1]],['R-022','admin-portal','28','completed','2m 05s',[27,1,0,0]],['R-021','shop-demo-app','51','completed','4m 01s',[44,5,2,0]],['R-020','admin-portal','19','completed','1m 33s',[18,0,1,0]]],
+bugs:[['BUG-101','Duplicate coupon discount','critical','R-024','open','Always','2026-10-09','Discounts cannot exceed 100%'],['BUG-102','Invalid email accepted','medium','R-023','investigating','Always','2026-10-08','Form must validate email format'],['BUG-103','Negative checkout total','critical','R-024','open','Always','2026-10-09','Checkout total must never be negative'],['BUG-104','Duplicate form submission','high','R-021','investigating','Intermittent','2026-10-05','Duplicate submissions must not create duplicate records'],['BUG-105','Broken navigation route','low','R-022','verified','Always','2026-10-03','All nav links must resolve']],
+events:['Application exploration completed.','Test plan validated.','Boundary-value tests executed.','Counterexample reproduced.','Bug report generated.','Regression suite updated.'],
+pev:['Discount boundary tested (100%) — passed.','Invalid input rejected as expected.','Duplicate coupon behavior investigated.','Counterexample discovered: coupon applied twice.','Shorter reproduction sequence identified (3 steps).'],
+tests:['Boundary: discount = 100%','Invalid: discount = -5%','Repeat: apply coupon ×2'],
+nextPool:[['Sequence: apply coupon → remove item → checkout','The duplicate-coupon failure suggests state is not recomputed after cart changes.','fail'],['Boundary: quantity = 0 after coupon','Previous failure hints at pricing drift; test the zero-quantity edge.','fail'],['Repeat: double-click “Place order”','Probes the duplicate-submission rule next.','pass']],
+reg:[['Coupon Calculation','BUG-101','2026-10-09','failed',14],['Login Validation','—','2026-10-09','passed',22],['Cart Quantity Update','BUG-103','2026-10-08','blocked',9],['Duplicate Submission Prevention','BUG-104','2026-10-08','passed',11],['Protected Route Access','—','2026-10-07','passed',17]],
+set:{name:'shop-demo-app',browser:'Chromium',budget:'50',mode:'Standard Exploration'}};
+try{Object.assign(S.set,JSON.parse(localStorage.getItem('qa-set')||'{}'))}catch(e){}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+function go(p){S.page=p;render()}function gs(v){S.q=v;if(S.page!=='bugs')S.page='bugs';render()}
+let demo='<span class="demo">SAMPLE DATA</span>';
+const tbl=(h,r)=>`<div class="sc"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r}</table></div>`;
+function chart(){const W=520,H=170,bw=44,mx=55,c=['#39ff88','#ff5c6c','#ffb84d','#5cc8ff'];
+let s=`<svg viewBox="0 0 ${W} ${H+24}" width="100%" role="img" aria-label="Test results by run">`;
+[...S.runs].reverse().forEach((r,i)=>{let y=H,x=20+i*(W/Math.max(S.runs.length,5));r[5].forEach((v,k)=>{const h=v/mx*H;y-=h;s+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${c[k]}" opacity=".85" rx="2"/>`});s+=`<text x="${x+bw/2}" y="${H+16}" fill="#7d8f85" font-size="11" text-anchor="middle">${r[0]}</text>`});
+return s+'</svg><div class="sm mu">■ <span style="color:#39ff88">passed</span> ■ <span style="color:#ff5c6c">failed</span> ■ <span style="color:#ffb84d">blocked</span> ■ <span style="color:#5cc8ff">inconclusive</span></div>'}
+const P={
+overview:()=>`<div class="row sp"><div><h1>Autonomous Quality Intelligence</h1><p class="sub">Explore application behavior, discover defects, and investigate failures.</p></div><button class="pri" onclick="go('start')">Start New Test Run</button></div>
+<p>${demo} <span class="mu sm">Illustrative demo metrics, not real results.</span></p>
+<div class="grid">${[['Total Test Runs',S.runs.length+19],['Tests Passed',186],['Bugs Discovered',S.bugs.length+7],['Regression Success Rate','94%']].map(m=>`<div class="pn"><div class="mu sm">${m[0]}</div><div class="m">${m[1]}</div></div>`).join('')}</div>
+<div class="grid g2"><div class="pn"><h2>Test Execution</h2>${chart()}</div>
+<div class="pn"><h2>Agent Activity Timeline</h2><div class="tl">${S.events.map(e=>`<div>${e}</div>`).join('')}</div></div></div>
+<div class="pn"><h2>Recent Test Runs</h2>${tbl(['Run ID','Target','Tests','Status','Duration',''],S.runs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${B(r[3])}</td><td>${r[4]}</td><td><a style="color:var(--g);cursor:pointer" onclick="go('bugs')">View Report</a></td></tr>`).join(''))}</div>
+<div class="pn"><h2>Recent Bug Discoveries</h2>${tbl(['Bug','Severity','Discovered','Status'],S.bugs.slice(0,4).map(b=>`<tr class="c" onclick="openBug('${b[0]}')"><td>${b[1]}</td><td>${B(b[2])}</td><td>${b[6]}</td><td>${B(b[4])}</td></tr>`).join(''))}</div>`,
+start:()=>`<h1>Start Testing</h1><p class="sub">Configure a run. <span class="demo">DEMO MODE</span> No real browser automation occurs.</p>
+<div class="pn f" style="max-width:640px"><label>Target website URL *</label><input id="u" placeholder="https://shop.example.com"><div class="err" id="eu"></div>
+<label>Application name *</label><input id="an" value="${S.set.name}"><div class="err" id="ea"></div>
+<label>Testing objectives</label><textarea id="ob" rows="3" placeholder="e.g. Verify checkout pricing rules"></textarea>
+<div class="grid"><div><label>Testing mode</label><select id="md">${['Standard Exploration','Adaptive Counterexample Discovery','Regression Testing'].map(o=>`<option ${o==S.set.mode?'selected':''}>${o}</option>`).join('')}</select></div>
+<div><label>Browser</label><select id="br">${['Chromium','Firefox','WebKit'].map(o=>`<option ${o==S.set.browser?'selected':''}>${o}</option>`).join('')}</select></div>
+<div><label>Max test count</label><input id="mt" type="number" value="30" min="1"></div><div><label>Exploration budget (min)</label><input id="eb" type="number" value="${S.set.budget}" min="1"></div></div>
+<p><button class="pri" id="go" onclick="startRun()" ${S.running?'disabled':''}>${S.running?'Running (simulated)…':'Initialize QA Agent'}</button></p>
+${S.running||S.prog?`<div class="bar"><i style="width:${S.prog}%"></i></div><p class="sm mu">Simulated progress: ${S.prog}%</p>`:''}</div>`,
+paradox:()=>`<h1>Paradox QA</h1><p class="sub">Discover the conditions under which your application breaks.</p><p>${demo}</p>
+<div class="grid g2"><div class="pn"><h2>Business Rules</h2><ul>${['Checkout total must never be negative.','Discounts cannot exceed 100%.','Unauthorized users cannot access protected operations.','Duplicate submissions must not create duplicate records.'].map(x=>`<li>${x}</li>`).join('')}</ul></div>
+<div class="pn"><h2>Test Generation</h2><div class="row">${['Normal inputs','Boundary values','Invalid inputs','Repeated actions','Unexpected sequences','State transitions'].map(x=>`<span class="b medium">${x}</span>`).join('')}</div>
+<h3 style="margin-top:14px">Generated tests</h3><ul>${S.tests.map(t=>`<li>${t}</li>`).join('')}</ul></div></div>
+<div class="pn"><div class="row sp"><h2>Adaptive Exploration Timeline</h2><button class="pri" onclick="nextTest()">Generate Next Test</button></div><div class="tl">${S.pev.map(e=>`<div>${e}</div>`).join('')}</div></div>
+<h2>Counterexample Results</h2><div class="grid g2">${[['Coupon applied twice','Discounts cannot exceed 100%','Second coupon rejected','Second coupon stacked; 150% off','1. Add item  2. Apply SAVE50  3. Apply SAVE50 again'],['Negative total after item removal','Checkout total must never be negative','Total recalculated to ≥ 0','Total shows -$12.40','1. Add 2 items  2. Apply coupon  3. Remove 1 item']].map(c=>`<div class="pn"><h3>${c[0]}</h3><p class="sm"><b>Violated:</b> ${c[1]}<br><b>Expected:</b> ${c[2]}<br><b>Actual:</b> ${c[3]}<br><b>Steps:</b> ${c[4]}</p><div class="row">${B('Reproduced')} <span class="b medium">Evidence: available (sample)</span></div></div>`).join('')}</div>`,
+bugs:()=>{const q=S.q.toLowerCase(),l=S.bugs.filter(b=>(!q||(b[0]+b[1]).toLowerCase().includes(q))&&(!S.sev||b[2]==S.sev)&&(!S.st||b[4]==S.st));
+return `<h1>Bug Reports</h1><p class="sub">Click a bug to open its investigation panel. ${demo}</p><div class="row" style="margin-bottom:12px"><input placeholder="Search bugs…" value="${S.q}" oninput="S.q=this.value;render(1)" id="bq">
+<select onchange="S.sev=this.value;render()"><option value="">All severities</option>${['critical','high','medium','low'].map(x=>`<option ${S.sev==x?'selected':''}>${x}</option>`).join('')}</select>
+<select onchange="S.st=this.value;render()"><option value="">All statuses</option>${['open','investigating','verified'].map(x=>`<option ${S.st==x?'selected':''}>${x}</option>`).join('')}</select></div>
+<div class="pn">${l.length?tbl(['ID','Title','Severity','Run','Status','Reproducibility','Found'],l.map(b=>`<tr class="c" onclick="openBug('${b[0]}')"><td>${b[0]}</td><td>${b[1]}</td><td>${B(b[2])}</td><td>${b[3]}</td><td>${B(b[4])}</td><td>${b[5]}</td><td>${b[6]}</td></tr>`).join('')):'<div class="empty">No bugs match your filters.</div>'}</div>`},
+proofix:()=>{const O=[['1. Correct frontend state updates','Recompute totals from cart state after every change.','Small change, fast','Bug may return elsewhere','Low','Quick hotfix','Unit-test remove-after-coupon'],['2. Centralize pricing calculations','One pure pricing module used by all views.','Single source of truth','Refactor effort','Medium','Growing codebase','Table-driven pricing tests'],['3. Enforce invariants on backend','Server rejects totals below zero.','Protects all clients','API + deploy changes','High','Security-critical pricing','API contract + fuzz tests']];
+return `<h1>ProofFix</h1><p class="sub">Understand the failure. Compare the fixes. Keep developers in control.</p>
+<p><span class="demo">ILLUSTRATIVE SAMPLE ANALYSIS</span> <span class="mu sm">Recommendation-only. ProofFix never edits code or verifies fixes.</span></p>
+<div class="grid g2"><div class="pn"><h2>Bug Summary</h2><p class="sm"><b>Expected:</b> Total stays ≥ 0 after coupon and item removal.<br><b>Actual:</b> Total becomes -$12.40.<br><b>Steps:</b> Add 2 items → apply SAVE50 → remove 1 item.</p></div>
+<div class="pn"><h2>Root-Cause Analysis</h2><p class="sm"><b>Fact (observed):</b> Negative total after removal.<br><b>Hypothesis (AI-generated):</b> Fixed-amount coupon not re-capped when subtotal drops.<br><b>Evidence:</b> Network log shows stale <code>discount: 25.00</code>.<br><b>Alternatives:</b> Backend rounding; double-applied coupon.<br><b>Confidence:</b> Medium (65%)<br><b>Missing:</b> Source code, server pricing logs.</p></div></div>
+<div class="pn"><h2>Recommended Fix: Option 1</h2><p class="sm">Recompute and clamp the discount on every cart change.</p><pre id="code">${esc(`function total(cart, coupon) {
+  const sub = cart.items.reduce((s, i) => s + i.price * i.qty, 0);
+  const disc = Math.min(coupon?.amount ?? 0, sub);
+  return Math.max(0, sub - disc);
+}`)}</pre><p class="sm"><b>Pros:</b> simple, local. <b>Side effects:</b> backend may still disagree. <b>Tests:</b> remove item after coupon; 100% coupon; empty cart.</p>
+<div class="row"><button class="pri" onclick="copyFix()">Copy Suggested Fix</button><button onclick="S.review=true;render();toast('Marked for developer review')">Mark for Developer Review</button> ${S.review?B('Review'):B('Pending')}</div></div>
+<h2>Alternative Fixes</h2><div class="grid">${O.map(o=>`<div class="pn"><h3>${o[0]}</h3><p class="sm"><b>How:</b> ${o[1]}<br><b>Pros:</b> ${o[2]}<br><b>Cons:</b> ${o[3]}<br><b>Complexity:</b> ${o[4]}<br><b>Best for:</b> ${o[5]}<br><b>Test:</b> ${o[6]}</p></div>`).join('')}</div>
+<div class="pn"><h2>Fix Comparison</h2>${tbl(['Option','Complexity','Maintainability','Side-effect risk'],[['1. Frontend state','Low','Low','Medium'],['2. Centralize','Medium','High','Low'],['3. Backend invariants','High','High','Low']].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''))}</div>`},
+regression:()=>{const c=k=>S.reg.filter(r=>r[3]==k).length;return `<h1>Regression Tests</h1><p class="sub">Reusable tests created from discovered bugs. <span class="demo">MOCK RESULTS — not real execution</span></p>
+<div class="row" style="margin-bottom:12px"><button class="pri" onclick="runReg()" id="rb">Run Regression Suite</button>${S.regRan?`${B('Passed')} ${c('passed')} ${B('Failed')} ${c('failed')} ${B('Blocked')} ${c('blocked')} <b>Overall: ${c('failed')?'FAILING':'PASSING'}</b>`:''}</div>
+<div class="pn">${tbl(['Test','Related Bug','Last Run','Status','Executions',''],S.reg.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${B(r[3])}</td><td>${r[4]}</td><td><button onclick="openReg(${i})">Inspect</button></td></tr>`).join(''))}</div>`},
+settings:()=>`<h1>Settings</h1><p class="sub">Stored locally in your browser. No API keys needed.</p><div class="pn f" style="max-width:560px">
+<label>Project name</label><input id="sn" value="${S.set.name}"><label>Default browser</label><select id="sb">${['Chromium','Firefox','WebKit'].map(o=>`<option ${o==S.set.browser?'selected':''}>${o}</option>`).join('')}</select>
+<label>Testing budget (min)</label><input id="sg" type="number" value="${S.set.budget}"><label>Default test mode</label><select id="sm">${['Standard Exploration','Adaptive Counterexample Discovery','Regression Testing'].map(o=>`<option ${o==S.set.mode?'selected':''}>${o}</option>`).join('')}</select>
+<p class="sm">Demo mode: <span class="demo">ON</span> · AI provider: ${B('Pending')} not connected · Environment: Staging</p><button class="pri" onclick="saveSet()">Save settings</button></div>`};
+function render(keep){$('#nav').innerHTML=NAV.map(n=>`<a class="${S.page==n[0]?'on':''}" onclick="go('${n[0]}')"><span>${n[1]}</span>${n[2]}</a>`).join('');$('#main').innerHTML=P[S.page]();if(keep){const e=$('#bq');if(e){e.focus();e.setSelectionRange(99,99)}}}
+function drawer(h){$('#ov').innerHTML=h?`<div class="dr" onclick="if(event.target===this)drawer()"><div>${h}<p><button onclick="drawer()">Close</button></p></div></div>`:''}
+function openBug(id){const b=S.bugs.find(x=>x[0]==id);drawer(`<h2>${b[0]} — ${b[1]}</h2><div class="row">${B(b[2])}${B(b[4])}<span class="b medium">${b[5]}</span></div>
+<p class="sm"><b>Summary:</b> ${b[1]} observed in run ${b[3]}.<br><b>Requirement violated:</b> ${b[7]}<br><b>Preconditions:</b> Guest user, empty cart.<br><b>Steps:</b> 1. Add item 2. Apply coupon 3. Modify cart 4. Checkout<br><b>Expected:</b> Rule holds. <b>Actual:</b> Rule violated.<br><b>Related counterexample:</b> CX-${id.slice(-1)}</p>
+<div class="pn" style="text-align:center;color:var(--mu)">[Screenshot placeholder — sample evidence]</div><h3>Console log (sample)</h3><pre>[warn] cart.total = -12.40\nTypeError: price is NaN at pricing.js:42</pre><h3>Network log (sample)</h3><pre>POST /api/cart/coupon 200\nGET  /api/cart 200 {"total":-12.40}</pre>
+<button onclick="go('proofix');drawer()">Investigate in ProofFix</button>`)}
+function openReg(i){const r=S.reg[i];drawer(`<h2>${r[0]}</h2><p>${B(r[3])} <span class="demo">MOCK</span></p><h3>Steps</h3><ol><li>Open sample storefront</li><li>Perform setup for ${r[0]}</li><li>Execute the action under test</li><li>Assert the rule holds (${r[1]})</li></ol>`)}
+function startRun(){const u=$('#u').value.trim(),n=$('#an').value.trim();let ok=1;$('#eu').textContent=$('#ea').textContent='';
+if(!/^https?:\/\/.+\..+/.test(u)){$('#eu').textContent='Enter a valid URL (https://…)';ok=0}if(!n){$('#ea').textContent='Application name is required';ok=0}if(!ok)return;
+S.running=true;S.prog=0;const mt=+$('#mt').value||30,app=n;render();const t=setInterval(()=>{S.prog+=20;if(S.prog>=100){clearInterval(t);S.running=false;
+const id='R-0'+(25+S.runs.length-5);S.runs.unshift([id,app,String(mt),'completed','0m 05s (sim)',[Math.round(mt*.85),Math.round(mt*.1),Math.round(mt*.05),0]]);
+S.events.unshift(`Run ${id} completed (simulated).`,'Test plan validated.');S.prog=0;toast('Simulated run complete (DEMO MODE)');go('overview')}else if(S.page=='start')render()},700)}
+function nextTest(){const n=S.nextPool[S.nx%S.nextPool.length];S.nx++;S.tests.push(n[0]);S.pev.push(`Next test: ${n[0]} → ${n[2]=='fail'?'violation found (simulated)':'passed (simulated)'}.<br><span class="mu sm">Why: ${n[1]}</span>`);render();toast('New test added')}
+function copyFix(){const t=$('#code').textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Copied suggested fix')).catch(()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Copied suggested fix')}catch(e){toast('Copy failed — select manually')}a.remove()})}
+function runReg(){$('#rb').disabled=true;$('#rb').textContent='Running (mock)…';setTimeout(()=>{S.regRan=true;S.reg.forEach(r=>{r[4]++;r[2]='2026-10-11'});toast('Mock regression run complete');render()},1200)}
+function saveSet(){S.set={name:$('#sn').value,browser:$('#sb').value,budget:$('#sg').value,mode:$('#sm').value};try{localStorage.setItem('qa-set',JSON.stringify(S.set))}catch(e){}toast('Settings saved')}
+render();
+</script>
+<script>
+/* ---- LIVE MODE: connects the existing UI to the ProofGraph backend. Falls back to the demo above if the backend is unreachable. ---- */
+const API=location.protocol.startsWith('http')?'':'http://localhost:4000';
+const L={on:false,health:null,runs:[],bugs:[],reg:[],run:null,runId:null,fixBug:null,bug:null,fix:{},fixErr:{},busy:{},form:null};
+const e=x=>esc(String(x??''));
+async function api(p,o={}){const r=await fetch(API+p,{method:o.method||'GET',headers:{'content-type':'application/json'},body:o.body?JSON.stringify(o.body):undefined});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'HTTP '+r.status);return j}
+const img=s=>s?`<a href="${API+s}" target="_blank"><img src="${API+s}" alt="Failure screenshot" style="width:100%;border:1px solid var(--ln);border-radius:8px;display:block"></a>`:'<div class="pn" style="text-align:center;color:var(--mu)">No screenshot captured</div>';
+const dur=r=>{if(!r.finishedAt)return r.status=='running'?'running…':'—';const s=Math.round((new Date(r.finishedAt)-new Date(r.createdAt))/1000);return `${Math.floor(s/60)}m ${String(s%60).padStart(2,'0')}s`};
+const stat=s=>s=='error'?'Error':s;
+async function refresh(){const [runs,bugs,reg]=await Promise.all([api('/api/runs'),api('/api/bugs'),api('/api/regression')]);
+L.runs=runs;L.bugs=bugs;L.reg=reg;
+S.runs=runs.map(r=>[r.id,r.appName,String(r.total),stat(r.status),dur(r),[r.counts.passed,r.counts.failed,r.counts.blocked,0]]);
+S.bugs=bugs.map(b=>[b.id,b.title,b.severity,b.runId,b.status,b.reproducibility,b.found,b.requirement]);
+S.reg=reg.map(x=>[x.name,x.bugId,x.lastRun,x.status,x.executions]);
+const id=L.runId||runs[0]?.id;L.run=id?await api('/api/runs/'+id):null;
+S.events=L.run?L.run.events.slice(-7).reverse().map(x=>e(x.text)):['No test runs yet — start one from “Start Testing”.']}
+function poll(runId,onTick){return new Promise(res=>{const t=setInterval(async()=>{try{const r=await api('/api/runs/'+runId);onTick&&onTick(r);if(r.status!='running'){clearInterval(t);res(r)}}catch(x){clearInterval(t);res(null)}},1000)})}
+
+const PL={
+overview:()=>{const tp=L.runs.reduce((s,r)=>s+r.counts.passed,0),rp=L.reg.length?Math.round(L.reg.filter(r=>r.status=='passed').length/L.reg.length*100)+'%':'—';
+return `<div class="row sp"><div><h1>Autonomous Quality Intelligence</h1><p class="sub">Explore application behavior, discover defects, and investigate failures.</p></div><button class="pri" onclick="go('start')">Start New Test Run</button></div>
+<p>${B('Live')} <span class="mu sm">Results from real Playwright browser runs.</span></p>
+<div class="grid">${[['Total Test Runs',L.runs.length],['Tests Passed',tp],['Bugs Discovered',L.bugs.length],['Regression Success Rate',rp]].map(m=>`<div class="pn"><div class="mu sm">${m[0]}</div><div class="m">${m[1]}</div></div>`).join('')}</div>
+<div class="grid g2"><div class="pn"><h2>Test Execution</h2>${S.runs.length?chart():'<div class="empty">No runs yet.</div>'}</div>
+<div class="pn"><h2>Agent Activity Timeline</h2><div class="tl">${S.events.map(x=>`<div>${x}</div>`).join('')}</div></div></div>
+<div class="pn"><h2>Recent Test Runs</h2>${S.runs.length?tbl(['Run ID','Target','Tests','Status','Duration',''],S.runs.map(r=>`<tr><td>${r[0]}</td><td>${e(r[1])}</td><td>${r[2]}</td><td>${B(r[3])}</td><td>${r[4]}</td><td><a style="color:var(--g);cursor:pointer" onclick="openRun('${r[0]}')">View Report</a></td></tr>`).join('')):'<div class="empty">No runs yet.</div>'}</div>
+<div class="pn"><h2>Recent Bug Discoveries</h2>${S.bugs.length?tbl(['Bug','Severity','Discovered','Status'],S.bugs.slice(0,4).map(b=>`<tr class="c" onclick="openBug('${b[0]}')"><td>${e(b[1])}</td><td>${B(b[2])}</td><td>${b[6]}</td><td>${B(b[4])}</td></tr>`).join('')):'<div class="empty">No confirmed bugs yet.</div>'}</div>`},
+start:()=>{const f=L.form||{u:L.health.sampleAppUrl,an:S.set.name,ob:'',md:S.set.mode,br:S.set.browser,mt:30,eb:S.set.budget},r=L.run;
+return `<h1>Start Testing</h1><p class="sub">Configure a run. ${B('Live')} Tests execute in a real headless browser via Playwright.</p>
+<div class="pn f" style="max-width:640px"><label>Target website URL *</label><input id="u" value="${e(f.u)}" placeholder="https://shop.example.com"><div class="err" id="eu"></div>
+<label>Application name *</label><input id="an" value="${e(f.an)}"><div class="err" id="ea"></div>
+<label>Testing objectives / requirements (one per line)</label><textarea id="ob" rows="4" placeholder="Leave empty to use defaults, e.g.&#10;Discounts must remain within the permitted range.&#10;Checkout totals must never be negative.&#10;Changing cart contents must update the total correctly.">${e(f.ob)}</textarea>
+<div class="grid"><div><label>Testing mode</label><select id="md">${['Standard Exploration','Adaptive Counterexample Discovery','Regression Testing'].map(o=>`<option ${o==f.md?'selected':''}>${o}</option>`).join('')}</select></div>
+<div><label>Browser</label><select id="br">${['Chromium','Firefox','WebKit'].map(o=>`<option ${o==f.br?'selected':''}>${o}</option>`).join('')}</select></div>
+<div><label>Max test count</label><input id="mt" type="number" value="${e(f.mt)}" min="1" max="40"></div><div><label>Exploration budget (min)</label><input id="eb" type="number" value="${e(f.eb)}" min="1"></div></div>
+<p><button class="pri" id="go" onclick="startRun()" ${S.running?'disabled':''}>${S.running?'Running…':'Initialize QA Agent'}</button></p>
+${S.running&&r?`<div class="bar"><i style="width:${S.prog}%"></i></div><p class="sm mu">${r.id}: ${r.tests.length} tests executed — ${r.counts.passed} passed, ${r.counts.failed} failed, ${r.counts.blocked} blocked${r.browserLabel?' · '+e(r.browserLabel):''}</p><div class="tl sm">${r.events.slice(-5).reverse().map(x=>`<div>${e(x.text)}</div>`).join('')}</div>`:''}</div>`},
+paradox:()=>{const r=L.run;if(!r)return `<h1>Paradox QA</h1><p class="sub">Discover the conditions under which your application breaks.</p><div class="pn empty">No test runs yet.<p><button class="pri" onclick="go('start')">Start Testing</button></p></div>`;
+const cats={};r.tests.forEach(t=>cats[t.category]=(cats[t.category]||0)+1);const F=r.tests.filter(t=>t.status=='failed'),BL=r.tests.filter(t=>t.status=='blocked');
+const tl=r.events.filter(x=>['adaptive','fail','bug','done','error'].includes(x.kind));
+return `<h1>Paradox QA</h1><p class="sub">Discover the conditions under which your application breaks.</p>
+<div class="row" style="margin-bottom:12px"><select onchange="openRun(this.value)">${L.runs.filter(x=>x.mode!='Regression Testing').map(x=>`<option ${x.id==r.id?'selected':''}>${x.id}</option>`).join('')}</select>${B(stat(r.status))} <span class="mu sm">${e(r.url)} · ${r.tests.length} tests · ${e(r.browserLabel||'')}</span></div>
+<div class="grid g2"><div class="pn"><h2>Business Rules</h2><ul>${r.requirements.map(q=>`<li><b>${q.id}</b> ${e(q.text)} <span class="mu sm">(${q.source}${q.unmapped?', not machine-checkable yet':''})</span></li>`).join('')}</ul></div>
+<div class="pn"><h2>Test Generation</h2><div class="row">${['normal','boundary','invalid','empty','repeated','sequence','state'].map(x=>`<span class="b medium">${x} · ${cats[x]||0}</span>`).join('')}</div>
+<h3 style="margin-top:14px">Generated tests</h3><ul>${r.tests.map(t=>`<li>${B(t.status)} <b>${t.id}</b> ${e(t.name)} <span class="mu sm">${t.requirement}${t.parent?' · follow-up of '+t.parent:''}${t.source=='llm'?' · LLM-proposed':''}</span></li>`).join('')}</ul>
+${r.candidates?.length?`<p class="sm mu">${r.candidates.length} further follow-up(s) queued — use “Generate Next Test”.</p>`:''}</div></div>
+<div class="pn"><div class="row sp"><h2>Adaptive Exploration Timeline</h2><button class="pri" onclick="nextTest()" ${L.busy.next||r.status=='running'?'disabled':''}>${L.busy.next?'Executing…':'Generate Next Test'}</button></div><div class="tl">${tl.map(x=>`<div>${e(x.text)}${x.why?`<br><span class="mu sm">Why: ${e(x.why)}</span>`:''}</div>`).join('')||'<div>No adaptive activity yet.</div>'}</div></div>
+<h2>Counterexample Results</h2>${F.length?`<div class="grid g2">${F.map(t=>`<div class="pn"><h3>${t.id} — ${e(t.name)}</h3><p class="sm"><b>Violated:</b> ${e(t.violations[0].assertion)} <span class="mu">(${e(t.requirementText)})</span><br><b>Expected:</b> ${e(t.expected)}<br><b>Actual:</b> ${e(t.actual)}<br><b>Steps:</b> ${t.stepsText.slice(0,t.failedAtStep).map((s,i)=>`${i+1}. ${e(s)}`).join('  ')}</p>${img(t.screenshot)}<div class="row" style="margin-top:8px">${/^Always/.test(t.reproducibility)?B('Reproduced'):B('Inconclusive')} <span class="b medium">${e(t.reproducibility)}</span>${t.violations.length>1?`<span class="mu sm">+${t.violations.length-1} more assertion(s) violated</span>`:''}</div></div>`).join('')}</div>`:'<div class="pn empty">No counterexamples found in this run.</div>'}
+${BL.length?`<h2>Blocked (execution errors — not defects)</h2><div class="pn">${tbl(['Test','Error'],BL.map(t=>`<tr><td>${t.id} ${e(t.name)}</td><td class="sm">${e(t.error)}</td></tr>`).join(''))}</div>`:''}`},
+proofix:()=>{if(!L.bugs.length)return `<h1>ProofFix</h1><p class="sub">Understand the failure. Compare the fixes. Keep developers in control.</p><div class="pn empty">No confirmed bugs yet. Run Paradox QA first.</div>`;
+const id=L.fixBug||L.bugs[0].id;if(!L.bug||L.bug.id!=id){if(!L.busy.load){L.busy.load=1;selectFix(id)}return '<h1>ProofFix</h1><div class="pn empty">Loading bug…</div>'}
+const b=L.bug,a=L.fix[id],er=L.fixErr[id],busy=L.busy.fix==id,ai=a&&a.mode=='llm';
+const hyp=a?(ai?`AI-generated hypothesis (${e(a.model)})`:'Demo-mode hypothesis (deterministic playbook, no LLM)'):'';
+return `<h1>ProofFix</h1><p class="sub">Understand the failure. Compare the fixes. Keep developers in control.</p>
+<p>${a?`<span class="demo">${ai?'AI-GENERATED ANALYSIS':'DEMO-MODE RECOMMENDATION'}</span>`:''} <span class="mu sm">Recommendation-only. ProofFix never edits code, applies patches, or verifies fixes.</span></p>
+<div class="row" style="margin-bottom:16px"><select onchange="selectFix(this.value)">${L.bugs.map(x=>`<option value="${x.id}" ${x.id==id?'selected':''}>${x.id} — ${e(x.title)}</option>`).join('')}</select>
+<button class="pri" onclick="analyze('${id}')" ${busy?'disabled':''}>${busy?'Analyzing…':a?'Re-analyze Bug':'Analyze Bug'}</button>${busy?B('Running'):''}${er?`<span class="err">Analysis failed: ${e(er)}</span>`:''}${a?.llmError?`<span class="err">LLM failed (${e(a.llmError)}) — fell back to demo mode</span>`:''}</div>
+<div class="grid g2"><div class="pn"><h2>Bug Summary</h2><p class="sm"><span class="b passed">Observed</span><br><b>Requirement:</b> ${e(b.requirement)}<br><b>Expected:</b> ${e(b.expected)}<br><b>Actual:</b> ${e(b.actual)}<br><b>Steps:</b> ${b.steps.map((s,i)=>`${i+1}. ${e(s)}`).join(' → ')}<br><b>Reproducibility:</b> ${e(b.reproducibility)}</p>${img(b.screenshot)}</div>
+<div class="pn"><h2>Root-Cause Analysis</h2>${a?`<p class="sm"><b>Facts (observed in browser):</b></p><ul class="sm">${a.facts.slice(1,4).map(x=>`<li>${e(x)}</li>`).join('')}</ul>
+<p class="sm"><b>${hyp}:</b> ${e(a.rootCause.summary)}<br><b>Location:</b> <code>${e(a.rootCause.location||'not identified')}</code></p><b class="sm">Supporting evidence:</b><ul class="sm">${a.rootCause.evidence.map(x=>`<li>${e(x)}</li>`).join('')}</ul>
+${a.rootCause.alternatives.length?`<b class="sm">Alternative explanations:</b><ul class="sm">${a.rootCause.alternatives.map(x=>`<li>${e(x)}</li>`).join('')}</ul>`:''}
+<p class="sm"><b>Confidence:</b> ${Math.round(a.rootCause.confidence*100)}%<br><b>Uncertainty:</b> ${e(a.rootCause.uncertainty)}</p>`:`<div class="empty">${busy?'Analyzing evidence and source code…':'Click “Analyze Bug” to diagnose using the evidence and the source code.'}</div>`}</div></div>
+${a?`${a.code?.length?`<div class="pn"><h2>Relevant Source (read-only, ${a.sourceFiles.length} files scanned)</h2>${a.code.map(c=>`<div class="sm mu">${e(c.file)}:${c.start}-${c.end} — ${e(c.name)}()</div><pre>${e(c.code)}</pre>`).join('')}</div>`:''}
+<div class="pn"><h2>Recommended Fix: ${e(a.primary.title)}</h2><p class="sm"><b>Approach:</b> ${e(a.primary.approach)}<br><b>Why it may resolve the defect:</b> ${e(a.primary.why)}<br><b>Location:</b> <code>${e(a.primary.location||'—')}</code></p>${a.primary.snippet?`<pre id="code">${e(a.primary.snippet)}</pre>`:''}
+<p class="sm"><b>Side effects:</b> ${a.primary.sideEffects.map(e).join('; ')||'—'}<br><b>Tests to run:</b></p><ul class="sm">${a.primary.tests.map(x=>`<li>${e(x)}</li>`).join('')}</ul>
+<div class="row">${a.primary.snippet?'<button class="pri" onclick="copyFix()">Copy Suggested Fix</button>':''}<button onclick="markReview('${id}')">Mark for Developer Review</button> ${B(b.status=='review'?'Review':'Pending')}</div></div>
+${a.alternatives.length?`<h2>Alternative Fixes</h2><div class="grid">${a.alternatives.map((o,i)=>`<div class="pn"><h3>${i+2}. ${e(o.title)}</h3><p class="sm"><b>How:</b> ${e(o.how)}<br><b>Location:</b> <code>${e(o.location||'—')}</code><br><b>Pros:</b> ${o.pros.map(e).join('; ')}<br><b>Cons:</b> ${o.cons.map(e).join('; ')}<br><b>Complexity:</b> ${e(o.complexity)} · <b>Maintainability:</b> ${e(o.maintainability)}<br><b>Side effects:</b> ${o.sideEffects.map(e).join('; ')||'—'}<br><b>Best for:</b> ${e(o.preferableWhen)}<br><b>Test:</b> ${o.tests.map(e).join('; ')}</p></div>`).join('')}</div>`:''}
+<div class="pn"><h2>Fix Comparison</h2>${tbl(['Rank','Option','Complexity','Maintainability','Side-effect notes'],[[1,a.primary.title+' (recommended)',a.primary.complexity||'—',a.primary.maintainability||'—',a.primary.sideEffects.join('; ')],...a.alternatives.map((o,i)=>[i+2,o.title,o.complexity,o.maintainability,o.sideEffects.join('; ')])].map(r=>`<tr>${r.map(c=>`<td>${e(c)}</td>`).join('')}</tr>`).join(''))}<p class="sm"><b>Why this ranking:</b> ${e(a.ranking)}</p><p class="sm mu">${e(a.disclaimer)}</p></div>`:''}`},
+regression:()=>{const c=k=>L.reg.filter(r=>r.status==k).length;return `<h1>Regression Tests</h1><p class="sub">Reusable tests created from discovered bugs. ${B('Live')} Each re-executes the bug's minimal reproduction in a real browser.</p>
+<div class="row" style="margin-bottom:12px"><button class="pri" onclick="runReg()" id="rb" ${L.busy.reg?'disabled':''}>${L.busy.reg?'Running…':'Run Regression Suite'}</button>${L.reg.length?`${B('Passed')} ${c('passed')} ${B('Failed')} ${c('failed')} ${B('Blocked')} ${c('blocked')} <b>Overall: ${c('failed')?'FAILING':'PASSING'}</b>`:''}</div>
+<div class="pn">${S.bugs.length?tbl(['Test','Related Bug','Last Run','Status','Executions',''],S.bugs.map(b=>{const i=L.reg.findIndex(x=>x.bugId==b[0]),r=L.reg[i];return `<tr><td>${e(b[1])}</td><td>${b[0]}</td><td>${r?r.lastRun:'never'}</td><td>${B(r?r.status:'Pending')}</td><td>${r?r.executions:0}</td><td>${r?`<button onclick="openReg(${i})">Inspect</button>`:''}</td></tr>`}).join('')):'<div class="empty">No bugs discovered yet — regression tests are created from confirmed bugs.</div>'}</div>`},
+settings:()=>{const ai=L.health.ai;return `<h1>Settings</h1><p class="sub">Stored locally in your browser. API keys live on the backend only (ANTHROPIC_API_KEY).</p><div class="pn f" style="max-width:560px">
+<label>Project name</label><input id="sn" value="${e(S.set.name)}"><label>Default browser</label><select id="sb">${['Chromium','Firefox','WebKit'].map(o=>`<option ${o==S.set.browser?'selected':''}>${o}</option>`).join('')}</select>
+<label>Testing budget (min)</label><input id="sg" type="number" value="${e(S.set.budget)}"><label>Default test mode</label><select id="sm">${['Standard Exploration','Adaptive Counterexample Discovery','Regression Testing'].map(o=>`<option ${o==S.set.mode?'selected':''}>${o}</option>`).join('')}</select>
+<p class="sm">Backend: ${B('Passed')} connected · AI provider: ${ai.configured?B('Passed')+' '+e(ai.provider+' / '+ai.model):B('Pending')+' not configured — ProofFix uses labelled demo-mode recommendations'}<br>Sample target app: ${e(L.health.sampleAppUrl)}<br>Source scanned by ProofFix: <code>${e(L.health.sourceDir)}</code></p><button class="pri" onclick="saveSet()">Save settings</button></div>`}};
+
+async function openRun(id){L.runId=id;L.run=await api('/api/runs/'+id);go('paradox')}
+async function selectFix(id){L.fixBug=id;try{L.bug=await api('/api/bugs/'+id);if(L.bug.analysis)L.fix[id]=L.bug.analysis}catch(x){toast('Error: '+x.message)}L.busy.load=0;if(S.page=='proofix')render()}
+async function analyze(id){L.busy.fix=id;delete L.fixErr[id];render();try{L.fix[id]=await api(`/api/bugs/${id}/analyze`,{method:'POST'});toast(L.fix[id].mode=='llm'?'AI analysis complete':'Demo-mode analysis complete')}catch(x){L.fixErr[id]=x.message}L.busy.fix=0;await refresh().catch(()=>{});L.bug=await api('/api/bugs/'+id).catch(()=>L.bug);if(S.page=='proofix')render()}
+async function markReview(id){try{await api('/api/bugs/'+id,{method:'PATCH',body:{status:'review'}});L.bug.status='review';await refresh();toast('Marked for developer review');render()}catch(x){toast('Error: '+x.message)}}
+
+function goLive(){
+L.on=true;demo='';Object.assign(P,PL);
+const d=document.querySelector('.top .demo');if(d){d.textContent='LIVE';d.className='b passed'}
+startRun=async function(){const u=$('#u').value.trim(),n=$('#an').value.trim();let ok=1;$('#eu').textContent=$('#ea').textContent='';
+if(!/^https?:\/\/.+/.test(u)){$('#eu').textContent='Enter a valid URL (http://…)';ok=0}if(!n){$('#ea').textContent='Application name is required';ok=0}if(!ok)return;
+L.form={u,an:n,ob:$('#ob').value,md:$('#md').value,br:$('#br').value,mt:$('#mt').value,eb:$('#eb').value};
+try{const r=await api('/api/runs',{method:'POST',body:{url:u,appName:n,objectives:L.form.ob,mode:L.form.md,browser:L.form.br,maxTests:L.form.mt,budgetMin:L.form.eb}});
+S.running=true;S.prog=0;L.run=r;L.runId=r.id;render();
+const fin=await poll(r.id,x=>{L.run=x;S.prog=Math.min(95,Math.round(x.tests.length/x.maxTests*100));if(S.page=='start')render()});
+S.running=false;S.prog=0;await refresh();
+if(!fin||fin.status=='error')toast('Run failed: '+(fin?.error||'lost connection'));else toast(`${fin.id} complete: ${fin.counts.failed} failed, ${fin.bugIds.length} bug(s)`);
+fin&&fin.mode=='Regression Testing'?go('regression'):go('paradox')}catch(x){S.running=false;toast('Could not start run: '+x.message);render()}};
+nextTest=async function(){if(!L.run)return toast('Start a test run first');L.busy.next=1;render();try{const r=await api(`/api/runs/${L.run.id}/next`,{method:'POST'});toast(r.test?`${r.test.id} ${r.test.status}: ${r.test.name}`:r.message)}catch(x){toast('Error: '+x.message)}L.busy.next=0;await refresh();render()};
+openBug=async function(id){let b;try{b=await api('/api/bugs/'+id)}catch(x){return toast('Error: '+x.message)}
+drawer(`<h2>${b.id} — ${e(b.title)}</h2><div class="row">${B(b.severity)}${B(b.status)}<span class="b medium">${e(b.reproducibility)}</span></div>
+<p class="sm"><b>Requirement violated:</b> ${e(b.requirement)}<br><b>Failing assertion:</b> ${e(b.assertion)}<br><b>Found in:</b> run ${b.runId}, test ${b.testId} (${b.category}) · seen in ${b.evidence.length} test execution(s)<br><b>Target:</b> ${e(b.url)}<br><b>Preconditions:</b> Fresh browser context, empty cart.</p>
+<h3>Reproduction steps</h3><ol class="sm">${b.steps.map(s=>`<li>${e(s)}</li>`).join('')}</ol><p class="sm"><b>Expected:</b> ${e(b.expected)}<br><b>Actual:</b> ${e(b.actual)}</p>
+<h3>Screenshot (captured at failure)</h3>${img(b.screenshot)}
+<h3>Observed state per step</h3><pre>${b.observations.map(o=>e(`${o.step}. ${o.action}\n   subtotal ${o.subtotal}  discount ${o.discount}  total ${o.total}${o.message?'  msg "'+o.message+'"':''}${o.orderTotal?'  order '+o.orderTotal:''}`)).join('\n')}</pre>
+<h3>Browser console</h3><pre>${b.logs.length?b.logs.map(e).join('\n'):'(no console output)'}</pre>
+<button onclick="L.fixBug='${b.id}';go('proofix');drawer()">Investigate in ProofFix</button>`)};
+runReg=async function(){L.busy.reg=1;render();try{const r=await api('/api/regression',{method:'POST',body:{}});const fin=await poll(r.id);await refresh();toast(fin?`Regression ${fin.id}: ${fin.counts.passed} passed, ${fin.counts.failed} failed`:'Regression run lost')}catch(x){toast('Error: '+x.message)}L.busy.reg=0;render()};
+openReg=function(i){const r=L.reg[i];drawer(`<h2>${e(r.name)}</h2><p>${B(r.status)} <span class="mu sm">${r.bugId} · run ${r.runId} · ${r.executions} execution(s)</span></p><h3>Steps</h3><ol>${(r.steps||[]).map(s=>`<li>${e(s)}</li>`).join('')}</ol>
+${r.violations?.length?`<h3>Violations</h3><ul class="sm">${r.violations.map(v=>`<li>${e(v.assertion)}: expected ${e(v.expected)}, actual ${e(v.actual)}</li>`).join('')}</ul>`:''}${r.error?`<p class="err">${e(r.error)}</p>`:''}${r.screenshot?img(r.screenshot):''}`)};
+}
+(async()=>{try{L.health=await api('/api/health');await refresh();goLive();render()}catch(x){console.info('ProofGraph backend not reachable — staying in demo mode.',x.message)}})();
+</script></body></html>

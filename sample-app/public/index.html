@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop Demo</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; background: #f6f7f9; color: #1d2330; }
+  header { background: #1d2330; color: #fff; padding: 14px 24px; font-weight: 600; }
+  main { display: grid; grid-template-columns: 1fr 360px; gap: 24px; padding: 24px; max-width: 1000px; margin: auto; }
+  .card { background: #fff; border: 1px solid #e3e6eb; border-radius: 10px; padding: 16px; }
+  .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  button { cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #c9ced6; background: #fff; }
+  button.pri { background: #2557d6; color: #fff; border-color: #2557d6; }
+  .line { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+  .line input { width: 56px; }
+  .row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .tot { font-weight: 700; font-size: 18px; }
+  #message { min-height: 22px; color: #6a4a00; font-size: 13px; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>Shop Demo</header>
+<main>
+  <section class="card">
+    <h2>Products</h2>
+    <div class="products" id="products"></div>
+  </section>
+  <aside class="card">
+    <h2>Cart</h2>
+    <div id="lines" data-testid="cart-lines"></div>
+    <div style="margin:12px 0;display:flex;gap:6px">
+      <input id="coupon" data-testid="coupon-input" placeholder="Coupon code">
+      <button data-testid="apply-coupon" onclick="onApply()">Apply</button>
+    </div>
+    <div id="message" data-testid="message"></div>
+    <div class="row"><span>Subtotal</span><span data-testid="subtotal" id="subtotal"></span></div>
+    <div class="row"><span>Discount</span><span data-testid="discount" id="discount"></span></div>
+    <div class="row tot"><span>Total</span><span data-testid="total" id="total"></span></div>
+    <p><button class="pri" data-testid="checkout" onclick="onCheckout()">Place order</button></p>
+    <div data-testid="order-result" id="order"></div>
+  </aside>
+</main>
+<script src="cart.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
