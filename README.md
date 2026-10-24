@@ -1,4 +1,4 @@
-# ProofGraph (QA Autopilot)
+# Autopsy AI (QA Autopilot)
 
 Autonomous AI QA engineer: **Paradox QA** (adaptive, real-browser edge-case testing) + **ProofFix** (source-aware, recommendation-only fix suggestions).
 
